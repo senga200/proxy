@@ -7,4 +7,3 @@
       { "src": "/(.*)", "dest": "/api/proxy.js" }
     ]
   }
-  
