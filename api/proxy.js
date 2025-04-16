@@ -1,3 +1,4 @@
+console.log("allo allo")
 export default async function handler(req, res) {
     const url = req.query.url;
   
@@ -8,7 +9,7 @@ export default async function handler(req, res) {
       res.setHeader("Access-Control-Allow-Headers", "*");
       return res.status(200).end();
     }
-  
+
     if (!url) {
       return res.status(400).json({ error: "Missing url parameter" });
     }
