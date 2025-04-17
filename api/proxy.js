@@ -1,7 +1,12 @@
+export const config = {
+  api: {
+    bodyParser: false, // pour lire le corps manuellement
+  },
+};
+
 export default async function handler(req, res) {
   const url = req.query.url;
 
-  // Gérer les requêtes préflight CORS lala
   if (req.method === "OPTIONS") {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
@@ -13,14 +18,24 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing url parameter" });
   }
 
+  let body = undefined;
+  if (req.method !== "GET" && req.method !== "OPTIONS") {
+    body = await new Promise((resolve, reject) => {
+      let data = "";
+      req.on("data", chunk => (data += chunk));
+      req.on("end", () => resolve(data));
+      req.on("error", reject);
+    });
+  }
+
   try {
     const response = await fetch(url, {
       method: req.method,
       headers: {
         ...req.headers,
-        host: undefined // important pour éviter les conflits de host CORS
+        host: undefined,
       },
-      body: req.method !== "GET" ? req.body : undefined,
+      body,
     });
 
     const data = await response.text();
